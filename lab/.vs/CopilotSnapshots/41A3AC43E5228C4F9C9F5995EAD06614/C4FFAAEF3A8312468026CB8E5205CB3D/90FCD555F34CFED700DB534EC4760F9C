@@ -1,0 +1,46 @@
+﻿#pragma once
+#include "../header.h"
+class CRectangle {
+	int nx, ny, nWidth, nHeight, nbrushcolor, npencolor;
+	int Right, nBottom;
+
+	int GetRight() { return nx + nWidth; }
+	int GetBottom() { return ny + nHeight; }
+public:
+	CRectangle() : nx(0), ny(0), nWidth(30), nHeight(60), nbrushcolor(RGB(255, 34, 34)), npencolor(RGB(255, 255, 255)) {}
+	CRectangle(int pnx, int pny, int pnWid = 30, int pnHei = 60) : nx(pnx), ny(pny), nWidth(pnWid), nHeight(pnHei) {
+		nbrushcolor = RGB(255, 34, 34);
+		npencolor = RGB(255, 255, 255);
+	}
+	CRectangle(int pnx, int pny, int pnWid, int pnHei, int pnbrush, int pnpen) :nx(pnx), ny(pny), nWidth(pnWid), nHeight(pnHei), nbrushcolor(pnbrush), npencolor(pnpen) {}
+
+	int GetX() { return nx; }
+	void Setx(int pnx) { nx = pnx; }
+	__declspec(property(get = Get, put = Setx)) int X;
+
+	int GetY() { return ny; }
+	void SetY(int pny) { ny = pny; }
+	__declspec(property(get = GetY, put = SetY)) int Y;
+
+	int GetWidth() { return nWidth; }
+	void SetWidth(int pnWid) { nWidth = pnWid; }
+	__declspec(property(get = GetWidth, put = SetWidth)) int Width;
+
+	int GetHeight() { return nHeight; }
+	void SetHeight(int pnHei) { nHeight = pnHei; }
+	__declspec(property(get = GetHeight, put = SetHeight)) int Height;
+
+	int GetBrushcolor() { return nbrushcolor; }
+	void SetBrushcolor(int pnbrush) { nbrushcolor = pnbrush; }
+	__declspec(property(get = GetBrushcolor, put = SetBrushcolor)) int BrushColor;
+
+	int GetPencolor() { return npencolor; }
+	void SetPencolor(int pencolor) { npencolor = pencolor; }
+	__declspec(property(get = GetPencolor, put = SetPencolor)) int PenColor;
+
+	__declspec(property(get = GetX, put = SetX)) int Left;
+	__declspec(property(get = GetY, put = SetY)) int Top;
+	__declspec(property(get = GetRight)) int Right;
+	__declspec(property(get = GetBottom)) int Bottom;
+	void Draw() {}
+};

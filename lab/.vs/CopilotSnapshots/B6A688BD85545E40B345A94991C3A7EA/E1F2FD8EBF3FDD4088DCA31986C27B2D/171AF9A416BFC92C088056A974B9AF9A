@@ -1,0 +1,1541 @@
+﻿#include "header.h"
+
+#define SPACE(n) for(int i = 0; i < n; i++) cout <<" ";
+#define BACK(n) for(int i = 0; i < n; i++) cout <<'\b';
+#define SPACEBACK(n) SPACE(n); BACK(n);
+#define ClearCin cin.clear(); cin.ignore(cin.rdbuf()->in_avail());
+#define MROW 3
+#define MCOL 4
+
+void SetMazeCursorPosition(int x, int y) {
+    COORD pos = { (SHORT)x, (SHORT)y };
+    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), pos);
+}
+
+void SetCursorPosition(short pnRow, short pnCol) {
+    HANDLE hStdOut = GetStdHandle(STD_OUTPUT_HANDLE);
+    COORD position{ pnCol, pnRow };
+    SetConsoleCursorPosition(hStdOut, position);
+}
+
+COORD GetCursorPosition() {
+    CONSOLE_SCREEN_BUFFER_INFO IpCursorInfo;
+    GetConsoleScreenBufferInfo(GetStdHandle(STD_ERROR_HANDLE), &IpCursorInfo);
+    return IpCursorInfo.dwCursorPosition;
+}
+
+typedef
+struct _MATRIX {
+    double nMatrix[MROW][MCOL]{ 0 };
+    int nRow{}, nCol{};
+    int InputMatrFromKb(int pindx, int pindy);
+    void OutputMatrixGraf(std::string pstitle, int plndx, int plndy);
+} MATRIX;
+
+int _MATRIX::InputMatrFromKb(int pindx, int pindy)
+{
+    printf("Введите данные матрицы %dx%d\n", MROW, MCOL);
+
+    CONSOLE_SCREEN_BUFFER_INFO crd;
+    GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &crd);
+
+    unsigned char ch = 0;
+    char sText[64]{}, sTitle[64] = "Матрица";
+
+    OutputMatrixGraf(sTitle, pindx, pindy);
+
+    for (int r = 0; r < MROW; r++) {
+        for (int c = 0; c < MCOL; c++) {
+            int temp;
+            SetCursorPosition(8, crd.dwCursorPosition.X);
+            SPACEBACK(100);
+            sprintf_s(sText, "Matr[%i][%i] = ", r + 1, c + 1);
+            printf(sText);
+            cin >> temp;
+            if (cin.fail() || temp <= 0) {
+                cout << " Ошибка! Введите положительное целое число.";
+                ClearCin;
+                ch = _getch();
+                if (ch == 27) return -1;
+                c--;
+                continue;
+            }
+            nMatrix[r][c] = temp;
+            OutputMatrixGraf(sTitle, pindx, pindy);
+        }
+    }
+    return 0;
+}
+
+void _MATRIX::OutputMatrixGraf(std::string pstitle, int pindx, int pindy) {
+    HWND hwnd = (HWND)GetStdHandle(STD_OUTPUT_HANDLE);
+    HDC hdc = GetDC(GetConsoleWindow());
+
+    CONSOLE_FONT_INFO conf{};
+    GetCurrentConsoleFont(hwnd, false, &conf);
+    CONSOLE_SCREEN_BUFFER_INFO cxy;
+    GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &cxy);
+
+    int indentY = (pindy < 0) ? conf.dwFontSize.Y * (cxy.dwCursorPosition.Y + 1) : pindy; // отступ начала граф вывода
+    int indentX = (pindx < 0) ? conf.dwFontSize.X * (cxy.dwCursorPosition.X + 5) : pindx;
+
+    HFONT hfont = CreateFontA(34, 0, 0, 0, FW_NORMAL, false, false, false, RUSSIAN_CHARSET,
+        OUT_OUTLINE_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, VARIABLE_PITCH,
+        "Times New Roman");
+    HFONT holdfont = (HFONT)SelectObject(hdc, hfont);
+    SetTextColor(hdc, RGB(0, 255, 255));
+    SetBkColor(hdc, RGB(0, 0, 0));
+    TextOutA(hdc, indentX, indentY, pstitle.c_str(), pstitle.length());
+    SelectObject(hdc, holdfont);
+    DeleteObject(hfont);
+
+    indentY += 34;
+
+    HPEN hpen = CreatePen(PS_SOLID, 2, RGB(255, 255, 255));
+    LOGBRUSH lgbr{ PS_SOLID, RGB(54,54,54), 0 };
+    HBRUSH hbrush = CreateBrushIndirect(&lgbr);
+    HANDLE oldbrush = SelectObject(hdc, hbrush),
+        oldpen = SelectObject(hdc, hpen);
+    Rectangle(hdc, indentX, indentY, indentX + (MCOL + 1) * 5 * conf.dwFontSize.X,
+        indentY + (2 * conf.dwFontSize.Y) * (MROW + 1));
+    char txt[30]{};
+    SetBkColor(hdc, RGB(54, 54, 54));
+    for (int i = 0; i <= MCOL; i++) {
+        int nx3 = indentX + (i + 1) * 5 * conf.dwFontSize.X,
+            ny = indentY;
+        int nx = indentX;
+        MoveToEx(hdc, nx3, ny, NULL);
+        LineTo(hdc, nx3, ny + (2 * conf.dwFontSize.Y) * (MROW + 1));
+        sprintf_s(txt, "C%d", i + 1);
+        SIZE sz{};
+        GetTextExtentPointA(hdc, txt, strlen(txt), &sz);
+        SetTextColor(hdc, RGB(0, 255, 255));
+        if ((i + 1) <= MCOL)
+            TextOutA(hdc, nx + (i + 1) * 5 * conf.dwFontSize.X + (5 * conf.dwFontSize.X - sz.cx) / 2,
+                ny + (2 * conf.dwFontSize.Y - sz.cy) / 2, txt, strlen(txt));
+    }
+    for (int i = 0; i < MROW; i++) {
+        SIZE sz{};
+        sprintf_s(txt, "R%d", i + 1);
+        GetTextExtentPointA(hdc, txt, strlen(txt), &sz);
+        int nx = indentX + (MCOL + 1) * 5 * conf.dwFontSize.X,
+            nx2 = indentX + (MCOL + 1) * 5 * conf.dwFontSize.X,
+            ny = indentY,
+            nY2 = indentY + (i + 1) * 2 * conf.dwFontSize.Y + (2 * conf.dwFontSize.Y - sz.cy) / 2;
+        MoveToEx(hdc, indentX, indentY + (i + 1) * 2 * conf.dwFontSize.Y, NULL);
+        LineTo(hdc, nx2, indentY + (i + 1) * 2 * conf.dwFontSize.Y);
+        SetTextColor(hdc, RGB(0, 255, 255));
+        if ((i + 1) <= MROW)
+            TextOutA(hdc, indentX + (5 * conf.dwFontSize.X - sz.cx) / 2,
+                nY2, txt, strlen(txt));
+        char txt[30]{};
+        for (int j = 0; j < MCOL; j++) {
+            int nx = indentX + (j + 1) * 5 * conf.dwFontSize.X;
+            sprintf_s(txt, "%5.1f", nMatrix[i][j]);
+            SIZE sz{};
+            GetTextExtentPoint32A(hdc, txt, strlen(txt), &sz);
+            SetTextColor(hdc, RGB(255, 255, 255));
+            TextOutA(hdc, nx + (5 * conf.dwFontSize.X - sz.cx) / 2, ny + (i + 1) * (conf.dwFontSize.Y * 2) + (2 * conf.dwFontSize.Y - sz.cy) / 2, txt, strlen(txt));
+        }
+    }
+}
+
+float maxx(float a, float b, float c, float d) {
+    float mx = 0;
+    if (a > mx) mx = a;
+    if (b > mx) mx = b;
+    if (c > mx) mx = c;
+    if (d > mx) mx = d;
+    return(mx);
+}
+
+float minn(float a, float b, float c, float d) {
+    float mn = INFINITY;
+    if (a < mn) mn = a;
+    if (b < mn) mn = b;
+    if (c < mn) mn = c;
+    if (d < mn) mn = d;
+    return(mn);
+}
+
+float arr_max(float s[], const int size)
+{
+    float mx = 0;
+
+    for (int i = 0; i < size; i++) {
+        if (s[i] > mx) mx = s[i];
+    }
+    return mx;
+}
+
+float arr_min(float s[], const int size) {
+    float mn = INFINITY;
+    for (int i = 0; i < size; i++) {
+        if (s[i] < mn) mn = s[i];
+    }
+    return mn;
+}
+
+float cin_cond(string b, float ex = INFINITE) {
+    float a;
+    while (true) {
+        cin >> a;
+        if (cin.fail()) {
+            ClearCin;
+            cout << "Ошибка ввода!\nПовторите ввод\n";
+            cout << b;
+            continue;
+        }
+        if (ex != INFINITE and a == ex) {
+            cout << "Ошибка ввода!\nПовторите ввод\n";
+            cout << b;
+            continue;
+        }
+        break;
+    }
+    return(a);
+}
+
+bool inputFloat(float& value, bool con) {
+    string buffer;
+    char ch;
+    bool error = false;
+    COORD startPos = GetCursorPosition();
+
+    while (true) {
+        ch = _getch();
+        if (ch == 27) return false;
+        if (ch == 13) {
+            try {
+                size_t pos;
+                float temp = stof(buffer, &pos);
+                if (con && temp <= 1) {
+                    cout << "Ошибка, введите число больше или равно 2: ";
+                    buffer.clear();
+                    error = true;
+                }
+                if (error) {
+                    SetCursorPosition(startPos.Y + 1, startPos.X);
+                    cout << "\x1b[2K\r";
+                    SetCursorPosition(startPos.Y, 0);
+                }
+                if (pos != buffer.length()) {
+                    throw runtime_error("");
+                }
+                value = stof(buffer);
+                cout << "\n";
+                return true;
+            }
+            catch (...) {
+                cout << "\nОшибка! Повторите ввод: ";
+                buffer.clear();
+                error = true;
+            }
+        }
+        else if (ch == 8) {
+            if (!buffer.empty()) {
+                buffer.pop_back();
+                cout << "\b \b";
+            }
+        }
+        else if (ch == 46) {
+            ch = 44;
+            buffer += ch;
+            cout << ch;
+        }
+        else {
+            buffer += ch;
+            cout << ch;
+        }
+    }
+}
+
+bool inputInt(int& value, bool con) {
+    string buffer;
+    char ch;
+    bool error = false;
+    COORD startPos = GetCursorPosition();
+
+    while (true) {
+        ch = _getch();
+        if (ch == 27) return false;
+        if (ch == 13) {
+            try {
+                size_t pos;
+                int temp = stoi(buffer, &pos);
+                if (con && temp <= 1) {
+                    buffer.clear();
+                    error = true;
+                }
+                if (error) {
+                    SetCursorPosition(startPos.Y + 1, startPos.X);
+                    cout << "\x1b[2K\r";
+                    SetCursorPosition(startPos.Y, 0);
+                }
+                if (pos != buffer.length()) {
+                    throw runtime_error("");
+                }
+                value = stoi(buffer);
+                cout << "\n";
+                return true;
+            }
+            catch (...) {
+                cout << "\nОшибка! Повторите ввод: ";
+                buffer.clear();
+                error = true;
+            }
+        }
+        else if (ch == 8) {
+            if (!buffer.empty()) {
+                buffer.pop_back();
+                cout << "\b \b";
+            }
+        }
+        else {
+            buffer += ch;
+            cout << ch;
+        }
+    }
+}
+
+bool inputBinary(string& value) {
+    string buffer;
+    char ch;
+    bool error = false;
+
+    COORD startPos = GetCursorPosition();
+
+    while (true) {
+        ch = _getch();
+
+        if (ch == 27) {
+            return false;
+        }
+
+        if (ch == 13) {
+            try {
+                if (buffer.empty()) {
+                    throw runtime_error("empty");
+                }
+
+                for (char c : buffer) {
+                    if (c != '0' && c != '1') {
+                        throw runtime_error("invalid char");
+                    }
+                }
+
+                if (error) {
+                    SetCursorPosition(startPos.Y + 1, startPos.X);
+                    cout << "\x1b[2K\r";
+                    SetCursorPosition(startPos.Y, 0);
+                }
+
+                value = buffer;
+                return true;
+            }
+            catch (...) {
+                cout << "Ошибка! Повторите ввод: ";
+                buffer.clear();
+                error = true;
+            }
+        }
+        else if (ch == 8) {
+            if (!buffer.empty()) {
+                buffer.pop_back();
+                cout << "\b \b";
+            }
+        }
+        else {
+            if (ch == '0' || ch == '1') {
+                buffer += ch;
+                cout << ch;
+            }
+        }
+    }
+}
+
+
+
+void Info1() {
+    cout << "Аб-ганеев А. Н. группа 1бИВТн5 вариант 2\n\n";
+}
+
+void Info2() {
+    cout << "Аб-ганеев А. Н. группа 1бИВТн5 вариант 1\n\n";
+}
+
+
+int Lab2_2() {
+    system("cls");
+    Info1();
+
+    cout << "Задание 2.2\nДаны переменные w, v, h. Определить, какая из переменных является квадратом суммы двух других.\nПри отсутствии такой переменной также вывести соответстующее сообщение.\n\n\n";
+
+    float w, v, h;
+    cout << "Ввод данных:\n";
+    cout << "Введите w = "; w = cin_cond("W = ");
+    cout << "Введите v = "; v = cin_cond("V = ");
+    cout << "Введите h = "; h = cin_cond("H = ");
+    cout << "\nВведенные данные:\nw = " << w << ", v = " << v << ", h = " << h << ".\n\nРезультат:\n";
+
+    if (w == (v + h) * (v + h)) cout << "Переменная w = " << w << " является квадратом суммы переменных v = " << v << " и h = " << v << ".\n";
+    else if (v == (w + h) * (w + h)) cout << "Переменная v = " << v << " является квадратом суммы переменных w = " << w << " и h = " << h << ".\n";
+    else if (h == (w + v) * (w + v)) cout << "Переменная h = " << h << " является квадратом суммы переменных w = " << w << " и v = " << v << ".\n";
+    else cout << "Нет переменной, которая является квадртатом двух других.\n\n";
+    system("pause");
+    return 0;
+}
+
+int Lab3() {
+    system("cls");
+    Info1();
+
+    cout << "Задание 3.2\nДаны массивы R1, ..., R7; d1, ..., d7 и число N. Построить новый массив S по формуле:\nSi = Ri/P * произведение элементов массива D, где если 1 < di < 2, то P = N - di, в противном случае P = 1/N.\n\n\n";
+
+    int max_index, min_index;
+    const int size = 7;
+    float R[size]{};
+    float d[size]{};
+    float s[size]{};
+    bool prz = false;
+
+
+    cout << "Ввод данных:\nВведите N = ";
+    float N = cin_cond("N = ", 0);
+
+    cout << "\nМассив R:\n";
+    COORD coord = GetCursorPosition();
+    for (int i = 0; i < size; i++) {
+        SetCursorPosition(coord.Y, coord.X);
+        SPACEBACK(20);
+        cout << "R[" << i + 1 << "] = ";
+        while (!(cin >> R[i])) {
+            cout << "Ошибка ввода!\n";
+            cout << "Повторите ввод: "; SPACEBACK(20);
+            ClearCin;
+            prz = true;
+        }
+        if (prz) {
+            SetCursorPosition(coord.Y + 1, 0);
+
+            SPACEBACK(30);
+            SetCursorPosition(coord.Y + 2, 0); SPACEBACK(30);
+            prz = false;
+        }
+    }
+
+    SetCursorPosition(coord.Y - 1, 0); SPACEBACK(30);
+    SetCursorPosition(coord.Y, 0); SPACEBACK(30);
+    SetCursorPosition(coord.Y - 1, 0);
+
+    cout << "Массив d:\n";
+    prz = false;
+    for (int i = 0; i < size; i++) {
+        float tmp;
+        SetCursorPosition(coord.Y, coord.X);
+        SPACEBACK(20);
+        cout << "d[" << i + 1 << "] = ";
+        while (true) {
+            if (!(cin >> tmp)) {
+                cout << "Ошибка ввода!\n";
+                cout << "Повторите ввод: "; SPACEBACK(20);
+                ClearCin;
+                prz = true;
+                continue;
+            }
+            if (N > 1 && N < 2 && tmp == N) {
+                cout << "Ошибка ввода!\n";
+                cout << "Повторите ввод: "; SPACEBACK(20);
+                ClearCin;
+                prz = true;
+                continue;
+            }
+            break;
+        }
+        d[i] = tmp;
+
+        if (prz) {
+            SetCursorPosition(coord.Y + 1, 0); SPACEBACK(30);
+            SetCursorPosition(coord.Y + 2, 0); SPACEBACK(30);
+            prz = false;
+        }
+    }
+
+    SetCursorPosition(coord.Y - 1, 0); SPACEBACK(30);
+    SetCursorPosition(coord.Y, 0); SPACEBACK(30);
+    SetCursorPosition(coord.Y - 1, 0);
+
+    float P = 1;
+    for (int j = 0; j < size; j++) P = P * d[j];
+
+    for (int i = 0; i < size; i++) {
+        float p;
+        if (1 < d[i] and d[i] < 2) p = N - d[i];
+        else p = 1 / N;
+        s[i] = R[i] / p * P;
+    }
+
+    for (int i = 0; i < size; i++) {
+        if (s[i] == arr_max(s, size)) max_index = i;
+        else if (s[i] == arr_min(s, size)) min_index = i;
+    }
+
+    cout << "\n\nВведенные данные:\nN = " << N << "\nМассив R : { ";
+    for (int i = 0; i < size; i++) {
+        cout << R[i] << " ";
+    }
+    cout << "}";
+
+    cout << "\nМассив d: { ";
+    for (int i = 0; i < size; i++) {
+        cout << d[i] << " ";
+    }
+    cout << "}";
+
+    cout << "\nМассив s: { ";
+    for (int i = 0; i < size; i++) {
+        cout << s[i] << " ";
+    }
+    cout << "}";
+
+    cout << "\n\nРезультат:\nКоличество элементов между максимальным и минимальным значениями нового массива s: " << abs(max_index - min_index - 1) << "\n\n";
+
+    system("pause");
+    return 0;
+}
+
+bool isAllOnes(double matrix[][MCOL], int rows, int col) {
+    for (int i = 0; i < rows; i++) {
+        if (matrix[i][col] != 1) return false;
+    }
+    return true;
+}
+
+int Lab4() {
+    system("cls");
+    Info1();
+
+    cout << "Задание 4.\nВ положительной целочисленной матрице имеется несколько столбцов, состоящих только из единиц.\nЗаменить элементы этих столбцов полусуммой элементов всех остальных столбцов\n\n";
+
+    bool prz = false;
+
+    COORD coord = GetCursorPosition();
+    MATRIX matrix;
+    MATRIX newMatrix;
+    if (matrix.InputMatrFromKb(200, 200) < 0) {
+        cout << "Ошибка ввода данных матрицы.\n";
+        cout << "Расчет задания прерван!\n";
+    }
+
+    bool allOnesCol[MCOL]{ false };
+    for (int j = 0; j < MCOL; j++) {
+        allOnesCol[j] = true;
+        for (int i = 0; i < MROW; i++) {
+            if (matrix.nMatrix[i][j] != 1) {
+                allOnesCol[j] = false;
+                break;
+            }
+        }
+    }
+
+    for (int i = 0; i < MROW; i++) {
+        for (int j = 0; j < MCOL; j++) {
+            newMatrix.nMatrix[i][j] = matrix.nMatrix[i][j];
+        }
+    }
+
+    for (int j = 0; j < MCOL; j++) {
+        if (isAllOnes(matrix.nMatrix, MROW, j)) {
+            for (int i = 0; i < MROW; i++) {
+                float sum = 0;
+                for (int k = 0; k < MCOL; k++) {
+                    if (!allOnesCol[k]) sum += matrix.nMatrix[i][k];
+                }
+                newMatrix.nMatrix[i][j] = sum / 2;
+            }
+        }
+    }
+
+
+    newMatrix.OutputMatrixGraf("Результат", 600, 200);
+    cout << "Для продолжения нажмите на любую кнопку . . . ";
+    _getch();
+    return 0;
+}
+
+int Lab_Maska() {
+    system("cls");
+    Info2();
+    cout << "Дан массив целочисленных данных (short), заполненный случайными числами.\nИз этих чисел вывести на экран те, у которых биты в позициях 3, 5, 7 находятся а состоянии единицы.\n\n";
+    cout << "Маска: 84(десятичный формат) / 54(шестандцатеричный формат) / 0101 0100(двоичный формат).\n\n";
+
+    const int size = 20;
+    short mas[size]{}, maska = 0x54;
+
+    mt19937 gen(std::random_device{}());
+    uniform_int_distribution<int> dist(500, 32000);
+
+    for (int i = 0; i < size; i++) {
+        mas[i] = static_cast<short>(dist(gen));
+    }
+    cout << "\nИсходный массив:\n{ ";
+    for (int i = 0; i < size; i++) {
+        cout << mas[i] << " ";
+    }
+    cout << "}\n\n";
+
+    cout << "Числа удволетворяющие условию (позиция в массиве и значение):\n";
+    int n = false;
+    for (int i = 0; i < size; i++) {
+        if ((mas[i] & maska) == maska) {
+            printf("mas[%d] = %d\n", i + 1, mas[i]);
+            n++;
+        }
+    }
+    if (n == 0) cout << "Такие числа отстутствуют";
+    cout << "\n\n";
+
+    system("pause");
+    return 0;
+}
+
+int emergencyExit() {
+    system("cls");
+    Info2();
+    cout << "Аварийный выход\n\n";
+    system("pause");
+    return 0;
+
+}
+
+int victory() {
+    system("cls");
+    Info2();
+    cout << "Поздраляю, вы прошли лабиринт!\n\n";
+    return 0;
+}
+
+
+int sLab_1() {
+    system("cls");
+    Info2();
+
+    cout << "Даны x1, x2,..., x8...\nОпределить количество xi с четными номерами, меньшими x1 и xmax/2.\n\n";
+
+    const int size = 8;
+    float x[size];
+    int N = 0;
+
+    cout << "Введите значения массива mas:\n";
+
+    COORD coord = GetCursorPosition();
+    bool prz = 0;
+    for (int i = 0; i < size; i++) {
+        SetCursorPosition(coord.Y, coord.X);
+        SPACEBACK(20);
+        cout << "mas[" << i + 1 << "] = ";
+        if (!inputFloat(x[i], false)) {
+            return emergencyExit();
+        }
+    }
+
+    cout << "\nПолученный массив: { ";
+    for (int i = 0; i < size; i++) {
+        cout << x[i] << " ";
+    }
+    cout << "}\n\n";
+
+    float xmax = arr_max(x, size);
+
+    for (int i = 0; i < size; i++) {
+        if ((i + 1) % 2 == 0 && x[i] < x[0] && x[i] < xmax / 2)
+            N++;
+    }
+
+    cout << "Итого " << N << " элементов, удовлетворяющих условию.\n\n";
+    system("pause");
+
+    return 0;
+}
+
+int sLab_2() {
+    system("cls");
+    Info2();
+
+    cout << "Даны x1, x2,..., xn...\nОпределить количество xi с четными номерами, меньшими x1 и xmax/2.\n\n";
+
+    int size;
+    cout << "Введите размер массива mass (не менее 2): ";
+    if (!inputInt(size, true)) {
+        return emergencyExit();
+    }
+
+    float* x = new float[size];
+    int N = 0;
+
+    cout << "Введите значения массива mas:\n";
+
+    COORD coord = GetCursorPosition();
+    bool prz = 0;
+    for (int i = 0; i < size; i++) {
+        SetCursorPosition(coord.Y, coord.X);
+        SPACEBACK(20);
+        cout << "mas[" << i + 1 << "] = ";
+        if (!inputFloat(x[i], false)) {
+            delete[]x;
+            return emergencyExit();
+        }
+    }
+
+    cout << "\nПолученный массив: { ";
+    for (int i = 0; i < size; i++) {
+        cout << x[i] << " ";
+    }
+    cout << "}\n\n";
+
+    float xmax = arr_max(x, size);
+
+    for (int i = 0; i < size; i++) {
+        if ((i + 1) % 2 == 0 && x[i] < x[0] && x[i] < xmax / 2)
+            N++;
+    }
+
+    cout << "Итого " << N << " элементов, удовлетворяющих условию.\n\n";
+
+    delete[]x;
+    system("pause");
+
+    return 0;
+}
+
+#define Hi(a) (a >> (sizeof(a) * 4))
+#define Lo(a) (a ^ (Hi(a) << (sizeof(a) * 4)))
+#define Swap(a) (Hi(a) | (Lo(a) << (sizeof(a) * 4)))
+int Lab_Types() {
+    system("cls");
+    Info2();
+
+    cout << "Даны переменные a, b, c, d типов byte, short, int, long long соответственно. \nВывести информацию о каждом числе: десятичное и шестнадцатеричное представление, занимаемая память в байтах,\nстаршая и младшая половина в шестнадцатеричном виде, результат обмена старшей и младшей половины.\n\n";
+
+    unsigned char a = 45;
+    unsigned short b = 432165;
+    unsigned int c = 543129035433;
+    unsigned long long d = 6085492830948123;
+
+    printf("Информация о числах:\n");
+    printf("byte: %d(10-ная c.c.), %x(16-ная с.с.), память - %dбайт, High - %x, Low - %x, Swap - %x\n\n", a, a, sizeof(a), Hi(a), Lo(a), Swap(a));
+    printf("short: %d(10-ная c.c.), %x(16-ная с.с.), память - %dбайт, High - %x, Low  - %x, Swap - %x\n\n", b, b, sizeof(b), Hi(b), Lo(b), Swap(b));
+    printf("int: %d(10-ная c.c.), %x(16-ная с.с.), память - %dбайт, High - %x, Low  - %x, Swap - %x\n\n", c, c, sizeof(c), Hi(c), Lo(c), Swap(c));
+    printf("long long: %llu(10-ная c.c.), %llx(16-ная с.с.), память - %dбайт, High - %llx, Low  - %llx, Swap - %llx\n\n", d, d, sizeof(d), Hi(d), Lo(d), Swap(d));
+
+
+    system("pause");
+    return 0;
+}
+
+
+struct XY {
+    int x;
+    int y;
+    bool operator==(const XY& other) const { return x == other.x && y == other.y; }
+    bool operator!=(const XY& other) const { return x != other.x || y != other.y; }
+};
+
+const int map_size = 32;
+
+bool isWall(const unsigned int* maze, int x, int y) {
+    return (maze[y] >> (map_size - 1 - x)) & 1;
+}
+
+bool canMove(unsigned int* maze, int x, int y) {
+    return x >= 0 && x < map_size && y >= 0 && y < map_size && !isWall(maze, x, y);
+}
+
+void draw_wall() { SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 255); printf("++"); }
+void draw_entry_exit() { SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 34); printf("__"); }
+void draw_solution() { SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 51); printf("__"); }
+void draw_path() { SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 0); printf("__"); }
+void draw_player() { SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 110); printf("<>"); }
+
+void choise_object(unsigned int* maze, XY coord, XY start, XY end) {
+    if (isWall(maze, coord.x, coord.y)) draw_wall();
+    else if (coord == start) draw_entry_exit();
+    else if (coord == end) draw_entry_exit();
+    else draw_path();
+}
+
+void movePlayer(unsigned int* maze, XY& player, int dx, int dy, int x, int y, XY start, XY end) {
+    int nx = player.x + dx;
+    int ny = player.y + dy;
+
+    if (!canMove(maze, nx, ny)) {
+        Beep(750, 150);
+        return;
+    }
+
+    SetMazeCursorPosition(x + player.x * 2, y + player.y);
+    choise_object(maze, player, start, end);
+
+    player.x = nx;
+    player.y = ny;
+
+    SetMazeCursorPosition(x + player.x * 2, y + player.y);
+    draw_player();
+}
+
+void find_exit(unsigned int* maze, int x, int y, XY player, XY finish) {
+    bool visited[map_size][map_size] = {};
+    XY parent[map_size][map_size];
+
+    XY queue[map_size * map_size];
+    int start = 0, end = 0;
+
+    queue[end++] = player;
+    visited[player.y][player.x] = true;
+
+    int dx[4] = { 1, -1, 0, 0 };
+    int dy[4] = { 0, 0, 1, -1 };
+
+    while (start < end) {
+        XY cur = queue[start++];
+
+        if (cur == finish)
+            break;
+
+        for (int i = 0; i < 4; i++) {
+            int nx = cur.x + dx[i];
+            int ny = cur.y + dy[i];
+
+            if (canMove(maze, nx, ny) && !visited[ny][nx]) {
+                visited[ny][nx] = true;
+                parent[ny][nx] = cur;
+                queue[end++] = { nx, ny };
+            }
+        }
+    }
+
+    if (!visited[finish.y][finish.x])
+        return;
+
+    XY cur = finish;
+    while (cur != player) {
+        if (cur != finish) {
+            SetMazeCursorPosition(x + cur.x * 2, y + cur.y);
+            draw_solution();
+        }
+        cur = parent[cur.y][cur.x];
+    }
+}
+void draw_maze(int X, int Y, unsigned int* maze, XY start, XY end) {
+    SetMazeCursorPosition(X, Y);
+
+    for (int y = 0; y < map_size; y++) {
+        for (int x = 0; x < map_size; x++) {
+            choise_object(maze, { x, y }, start, end);
+        }
+        SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 7);
+        printf("|\n");
+    }
+}
+
+//
+int Lab_Maze() {
+    system("cls");
+    Info2();
+    printf("Лабиринт.\nУправление - стрелками. ESC - выход. F5 - показать путь.\n\n");
+
+    unsigned int map[32] = {
+        0b11111111111111111111111111111101,
+        0b10000000000000000000000000000001,
+        0b10101110111010111011111011101111,
+        0b10100010001010001000001000100001,
+        0b10111011101110111011101110111101,
+        0b10001000100010001000100010001101,
+        0b10101011111010111110101111101101,
+        0b10101000001010000010100000101101,
+        0b10111110101111101011111010111111,
+        0b10000010100000101000001010000001,
+        0b10101110111011101110111011101111,
+        0b10100010001000100010001000100001,
+        0b10111010111110101111101011111101,
+        0b10001010000010100000101000001101,
+        0b11101111101011111010111110101111,
+        0b11100000101000001010000010100001,
+        0b11111010101110111011101110111101,
+        0b10001010100010001000100010001101,
+        0b10101010111111111010101011111111,
+        0b10101010000000001010101000000001,
+        0b10111011101010111111101010111111,
+        0b10000000101010000000101010000001,
+        0b10101110111011101110111011101111,
+        0b10100010001000100010001000100001,
+        0b10111011101110111011101110111101,
+        0b10001000100010001000100010001101,
+        0b10101011111010111110101111101101,
+        0b10101000001010000010100000101101,
+        0b10101110101011101010111010111111,
+        0b10111110101111101011111010000001,
+        0b10000010100000111000001011111101,
+        0b11111111111111111111111111111101
+    };
+
+    XY start{ 30, 0 };
+    XY end{ 30, 31 };
+    XY player = start;
+
+    CONSOLE_CURSOR_INFO cursorInfo;
+    GetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE), &cursorInfo);
+    cursorInfo.bVisible = FALSE;
+    SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE), &cursorInfo);
+
+    CONSOLE_SCREEN_BUFFER_INFO coord;
+    GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &coord);
+    int X = coord.dwCursorPosition.X;
+    int Y = coord.dwCursorPosition.Y;
+
+    draw_maze(X, Y, map, start, end);
+    SetMazeCursorPosition(X + player.x * 2, Y + player.y);
+    draw_player();
+
+    unsigned char ch = 0;
+    do {
+        ch = _getch();
+
+        switch (ch) {
+        case 224:
+            switch (_getch()) {
+            case 80: movePlayer(map, player, 0, 1, X, Y, start, end); break;
+            case 75: movePlayer(map, player, -1, 0, X, Y, start, end); break;
+            case 77: movePlayer(map, player, 1, 0, X, Y, start, end); break;
+            case 72: movePlayer(map, player, 0, -1, X, Y, start, end); break;
+            }
+            break;
+
+        case 0:
+            switch (_getch()) {
+            case 63:
+                draw_maze(X, Y, map, start, end);
+                SetMazeCursorPosition(X + player.x * 2, Y + player.y);
+                draw_player();
+                find_exit(map, X, Y, player, end);
+                break;
+            }
+            break;
+        }
+
+        SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 7);
+
+        if (player == end) {
+            victory();
+            break;
+        }
+
+    } while (ch != 27);
+
+    cursorInfo.bVisible = TRUE;
+    SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE), &cursorInfo);
+
+    if (ch == 27) {
+        system("cls");
+        Info2();
+        printf("Аварийный выход.\n\n");
+    }
+
+    system("pause");
+    return 0;
+}
+
+
+
+string shifrText;
+string engAlphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+string rusAlphabet = "АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдеёжзийклмнопрстуфхцчшщъыьэюя";
+string numAlphabet = "0123456789";
+COORD pos = GetCursorPosition();
+
+bool isValidText(const string& text) {
+    for (char c : text) {
+        if (engAlphabet.find(c) == string::npos && rusAlphabet.find(c) == string::npos && c != ' ' && numAlphabet.find(c) == string::npos)
+        {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool inputText(string& value) {
+    string buffer;
+    char ch;
+
+    while (true) {
+        ch = _getch();
+
+        if (ch == 27) return false;
+
+        if (ch == 13) {
+            if (buffer.empty()) {
+                cout << "\nОшибка! Пустая строка.\n";
+                continue;
+            }
+
+            if (!isValidText(buffer)) {
+                cout << "\nОшибка! Только русские/английские буквы, цифры и пробел.\n";
+                buffer.clear();
+                continue;
+            }
+
+            value = buffer;
+            cout << "\n";
+
+            return true;
+        }
+        else if (ch == 8) {
+            if (!buffer.empty()) {
+                buffer.pop_back();
+                cout << "\b \b";
+            }
+        }
+        else {
+            buffer += ch;
+            cout << ch;
+        }
+    }
+}
+
+string caesar(const string& text, int shift) {
+    string res = "";
+
+    for (char c : text) {
+        size_t pos;
+
+        if ((pos = engAlphabet.find(c)) != string::npos) {
+            int n = engAlphabet.size();
+            res += engAlphabet[(pos + shift + n) % n];
+        }
+        else if ((pos = rusAlphabet.find(c)) != string::npos) {
+            int n = rusAlphabet.size();
+            res += rusAlphabet[(pos + shift + n) % n];
+        }
+        else if ((pos = numAlphabet.find(c)) != string::npos) {
+            int n = numAlphabet.size();
+            res += numAlphabet[(pos + shift + n) % n];
+        }
+        else {
+            res += c;
+        }
+    }
+
+    return res;
+}
+
+string dynamicCipher(const string& text) {
+    string res = "";
+
+    for (int i = 0; i < text.size(); i++) {
+        char c = text[i];
+        int shift = i + 1;
+
+        size_t pos;
+
+        if ((pos = engAlphabet.find(c)) != string::npos) {
+            int n = engAlphabet.size();
+            res += engAlphabet[(pos + shift) % n];
+        }
+        else if ((pos = rusAlphabet.find(c)) != string::npos) {
+            int n = rusAlphabet.size();
+            res += rusAlphabet[(pos + shift) % n];
+        }
+        else if ((pos = numAlphabet.find(c)) != string::npos) {
+            int n = numAlphabet.size();
+            res += numAlphabet[(pos + shift) % n];
+        }
+        else {
+            res += c;
+        }
+    }
+
+    return res;
+}
+
+string dynamicDecipher(const string& text) {
+    string res = "";
+
+    for (int i = 0; i < text.size(); i++) {
+        char c = text[i];
+        int shift = i + 1;
+
+        size_t pos;
+
+        if ((pos = engAlphabet.find(c)) != string::npos) {
+            int n = engAlphabet.size();
+            res += engAlphabet[(pos - shift + n) % n];
+        }
+        else if ((pos = rusAlphabet.find(c)) != string::npos) {
+            int n = rusAlphabet.size();
+            res += rusAlphabet[(pos - shift + n) % n];
+        }
+        else if ((pos = numAlphabet.find(c)) != string::npos) {
+            int n = numAlphabet.size();
+            res += numAlphabet[(pos - shift + n) % n];
+        }
+        else {
+            res += c;
+        }
+    }
+
+    return res;
+}
+
+
+const int MAX_BITS = 2048;
+
+string bitShifr(const string& s, int k) {
+    int bits[MAX_BITS];
+    int shifted[MAX_BITS];
+    int n = 0;
+    for (int i = 0; i < s.size(); i++) {
+        unsigned char c = s[i];
+        for (int j = 7; j >= 0; j--) {
+            bits[n++] = (c >> j) & 1;
+        }
+    }
+    if (n == 0) return "";
+    k %= n;
+    if (k < 0) k += n;
+    for (int i = 0; i < n; i++) {
+        shifted[(i + k) % n] = bits[i];
+    }
+    string res = "";
+    for (int i = 0; i < n; i += 8) {
+        unsigned char c = 0;
+        for (int j = 0; j < 8; j++) {
+            c = (c << 1) | shifted[i + j];
+        }
+        res += c;
+    }
+    return res;
+}
+
+int EncryptMenu() {
+    system("cls");
+    Info2();
+
+    cout << "Введите текст для шифрования:\n";
+    string text;
+
+    if (!inputText(text)) return emergencyExit();
+
+    string result = text;
+
+    unsigned char ch = 0;
+
+    do {
+        system("cls");
+        cout << "Меню шифрования\n";
+        cout << "Текущий текст: " << result << "\n\n";
+
+        cout << "1 - Шифрование Цезаря\n";
+        cout << "2 - Дешифрование Цезаря\n";
+        cout << "3 - Динамическое шифрование\n";
+        cout << "4 - Динамическое дешифрование\n";
+        cout << "5 - Побитовое шифрование\n";
+        cout << "6 - Побитовое дешифрование\n";
+        cout << "7 - Вернуть исходный текст\n";
+        cout << "ESC - выход\n\n";
+
+        ch = _getch();
+
+        switch (ch) {
+        case '1': result = caesar(result, 1); break;
+        case '2': result = caesar(result, -1); break;
+        case '3': result = dynamicCipher(result); break;
+        case '4': result = dynamicDecipher(result); break;
+        case '5': result = bitShifr(result, 1); break;
+        case '6': result = bitShifr(result, -1); break;
+        case '7': result = text; break;
+        }
+
+    } while (ch != 27);
+
+    system("cls");
+    Info2();
+    cout << "Аварийный выход.\n\n";
+
+    system("pause");
+    return 0;
+}
+
+void filterFile(const string& filename, bool binaryMode) {
+    ifstream in(filename);
+    ofstream out("temp.txt");
+
+    string line;
+
+    while (getline(in, line)) {
+
+        bool valid = true;
+        string token = "";
+        bool hasDigit = false;
+        bool hasDot = false;
+
+        int n = (int)line.size();
+
+        for (int i = 0; i <= n; i++) {
+            char c;
+            if (i < n) {
+                c = line[i];
+            }
+            else {
+                c = ' ';
+            }
+            if (c == ' ' || c == '\t') {
+                if (!token.empty()) {
+                    if (!hasDigit) {
+                        valid = false;
+                        break;
+                    }
+                    token = "";
+                    hasDigit = false;
+                    hasDot = false;
+                }
+                continue;
+            }
+            token += c;
+
+            if (binaryMode) {
+                if (c != '0' && c != '1') {
+                    valid = false;
+                    break;
+                }
+            }
+            else {
+                if (c >= '0' && c <= '9') {
+                    hasDigit = true;
+                }
+                else if (c == '.' || c == ',') {
+                    if (hasDot) {
+                        valid = false;
+                        break;
+                    }
+                    hasDot = true;
+                }
+                else if (c == '-') {
+                    if (token.size() != 1) {
+                        valid = false;
+                        break;
+                    }
+                }
+                else {
+                    valid = false;
+                    break;
+                }
+            }
+        }
+
+        if (valid) {
+            out << line << "\n";
+        }
+    }
+
+    in.close();
+    out.close();
+
+    remove(filename.c_str());
+    rename("temp.txt", filename.c_str());
+}
+
+int sLab_3() {
+
+    filterFile("small.txt", 0);
+    filterFile("small_bin.txt", 1);
+
+    filterFile("big.txt", 0);
+    filterFile("big_bin.txt", 1);
+
+    while (true) {
+        system("cls");
+        Info2();
+
+        cout << "Выберите файл:\n\n";
+        cout << "1 - small.txt\n";
+        cout << "2 - small_bin.txt\n";
+        cout << "3 - big.txt\n";
+        cout << "4 - big_bin.txt\n";
+        cout << "ESC - выход\n\n";
+
+        char ch = _getch();
+
+        string filename;
+        bool binaryMode = false;
+
+        switch (ch) {
+            case '1': filename = "small.txt"; break;
+            case '2': filename = "small_bin.txt"; binaryMode = true; break;
+            case '3': filename = "big.txt"; break;
+            case '4': filename = "big_bin.txt"; binaryMode = true; break;
+            case 27: return 0;
+        }
+
+        while (true) {
+            system("cls");
+            Info2();
+            cout << "Текущий файл: " << filename << "\n\n";
+            cout << "1 - Вывод числа по индексу\n";
+            cout << "2 - Изменение числа по индексу\n";
+            cout << "3 - Решение задачи\n";
+            cout << "ESC - Назад\n\n";
+
+            char cm = _getch();
+            if (cm == 27) break;
+
+            switch (cm) {
+            case '1':
+            {
+                system("cls");
+                Info2();
+                int index;
+                cout << "Введите индекс: ";
+                if (!inputInt(index, false)) {
+                    emergencyExit();
+                    break;
+                }
+
+                ifstream file(filename);
+                string str;
+
+                int k = 1;
+                bool found = false;
+
+                while (file >> str) {
+                    if (k == index) {
+                        if (binaryMode) {
+                            cout << "\nЧисло: " << stoi(str, nullptr, 2) << " (bin: " << str << ")";
+                        }
+                        else {
+                            cout << "\nЧисло: " << str;
+                        }
+
+                        found = true;
+                        break;
+                    }
+                    k++;
+                }
+
+                if (!found) {
+                    cout << "\nИндекс вне диапазона";
+                }
+
+                cout << "\n\n";
+
+                system("pause");
+                break;
+            }
+
+            case '2':
+            {
+                system("cls");
+                Info2();
+                int index;
+
+                cout << "Введите индекс: ";
+                if (!inputInt(index, false)) {
+					emergencyExit();
+                    break;
+                }
+
+                ifstream in(filename);
+                ofstream out("temp.txt");
+
+                string str;
+
+                int k = 1;
+
+                if (binaryMode) {
+
+                    string newValue;
+
+                    cout << "Введите новое бинарное число: ";
+                    if (!inputBinary(newValue)) {
+						emergencyExit();
+                        break;
+                    }
+                    while (in >> str) {
+                        if (k == index) {
+                            out << newValue << "\n";
+                        }
+                        else {
+                            out << str << "\n";
+                        }
+                        k++;
+                    }
+                }
+                else {
+                    float newValue;
+
+                    cout << "Введите новое число: ";
+                    if (!inputFloat(newValue, false)) {
+						emergencyExit();
+                        break;
+                    }
+
+                    while (in >> str) {
+                        if (k == index) {
+                            out << newValue << "\n";
+                        }
+                        else {
+                            out << str << "\n";
+                        }
+                        k++;
+                    }
+                }
+
+                in.close();
+                out.close();
+
+                remove(filename.c_str());
+                rename("temp.txt", filename.c_str());
+
+                cout << "\nЧисло изменено\n\n";
+
+                system("pause");
+                break;
+            }
+
+            case '3':
+            {
+                system("cls");
+                Info2();
+                ifstream file(filename);
+
+                string str;
+
+                float x;
+                float first;
+                float max;
+
+                bool firstElement = true;
+
+                while (file >> str) {
+
+                    if (binaryMode) {
+                        x = (float)stoi(str, nullptr, 2);
+                    }
+                    else {
+                        x = stof(str);
+                    }
+
+                    if (firstElement) {
+                        first = x;
+                        max = x;
+                        firstElement = false;
+                    }
+
+                    if (x > max) {
+                        max = x;
+                    }
+                }
+
+                file.clear();
+                file.seekg(0);
+
+                int k = 1;
+                int N = 0;
+
+                while (file >> str) {
+
+                    if (binaryMode) {
+                        x = (float)stoi(str, nullptr, 2);
+                    }
+                    else {
+                        x = stof(str);
+                    }
+
+                    if (k % 2 == 0 && x < first && x < max / 2) N++;
+                    k++;
+                }
+                cout << "Количество элементов: " << N << "\n\n";
+
+                system("pause");
+                break;
+            }
+            }
+        }
+    }
+
+    return 0;
+}
+
+
+int firstMenu() {
+    unsigned char ch = 0;
+    do {
+        system("cls");
+        cout << "Меню программы\n";
+        cout << "1 - Лабораторная работа 2.1\n";
+        cout << "2 - Лабораторная работа 2.2\n";
+        cout << "3 - Лабораторная работа 3\n";
+        cout << "4 - Лабораторная работа 4\n";
+        cout << "ESC для выхода из программы\n\n";
+
+        ch = _getch();
+        switch (ch) {
+        case '1': Lab2_1(); break;
+        case '2': Lab2_2(); break;
+        case '3': Lab3(); break;
+        case '4': Lab4(); break;
+        case 27: break;
+        }
+    } while (ch != 27);
+    return 0;
+}
+
+int secondMenu() {
+    unsigned char ch = 0;
+    do {
+        system("cls");
+        cout << "Меню программы\n";
+        cout << "1 - Лабиринт\n";
+        cout << "2 - Маска\n";
+        cout << "3 - Лабораторная работа 1\n";
+        cout << "4 - Лабораторная работа 2\n";
+        cout << "5 - Лабораторная работа 3\n";
+        cout << "6 - Типы данных, их разряды\n";
+        cout << "7 - Шифрование\n";
+        cout << "ESC для выхода из программы\n\n";
+
+        ch = _getch();
+        switch (ch) {
+        case '1': Lab_Maze(); break;
+        case '2': Lab_Maska(); break;
+        case '3': sLab_1(); break;
+        case '4': sLab_2(); break;
+        case '5': sLab_3(); break;
+        case '6': Lab_Types(); break;
+        case '7': EncryptMenu(); break;
+        case 27: break;
+        }
+    } while (ch != 27);
+    return 0;
+}
+
+int main() {
+    SetConsoleTitle(L"Учебная программа по дисциплине \"Информатика\"");
+    setlocale(LC_ALL, "rus");
+    SetConsoleCP(1251);
+    SetConsoleOutputCP(1251);
+    unsigned char ch = 0;
+    do {
+        system("cls");
+        cout << "Меню программы\n";
+        cout << "1 - Первый семестр\n";
+        cout << "2 - Второй семестр\n";
+        cout << "ESC для выхода из программы\n\n";
+
+        ch = _getch();
+        switch (ch) {
+        case '1': firstMenu(); break;
+        case '2': secondMenu(); break;
+        case 27: break;
+        }
+    } while (ch != 27);
+    return 0;}
