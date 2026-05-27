@@ -1,0 +1,157 @@
+#include "helpfuncs.h"
+
+void SetMazeCursorPosition(int x, int y) {
+    COORD pos = { (SHORT)x, (SHORT)y };
+    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), pos);
+}
+
+void SetCursorPosition(short pnRow, short pnCol) {
+    HANDLE hStdOut = GetStdHandle(STD_OUTPUT_HANDLE);
+    COORD position{ pnCol, pnRow };
+    SetConsoleCursorPosition(hStdOut, position);
+}
+
+COORD GetCursorPosition() {
+    CONSOLE_SCREEN_BUFFER_INFO IpCursorInfo;
+    GetConsoleScreenBufferInfo(GetStdHandle(STD_ERROR_HANDLE), &IpCursorInfo);
+    return IpCursorInfo.dwCursorPosition;
+}
+
+
+
+float maxx(float a, float b, float c, float d) {
+    float mx = 0;
+    if (a > mx) mx = a;
+    if (b > mx) mx = b;
+    if (c > mx) mx = c;
+    if (d > mx) mx = d;
+    return(mx);
+}
+
+float minn(float a, float b, float c, float d) {
+    float mn = INFINITY;
+    if (a < mn) mn = a;
+    if (b < mn) mn = b;
+    if (c < mn) mn = c;
+    if (d < mn) mn = d;
+    return(mn);
+}
+
+float arr_max(float s[], const int size)
+{
+    float mx = 0;
+
+    for (int i = 0; i < size; i++) {
+        if (s[i] > mx) mx = s[i];
+    }
+    return mx;
+}
+
+float arr_min(float s[], const int size) {
+    float mn = INFINITY;
+    for (int i = 0; i < size; i++) {
+        if (s[i] < mn) mn = s[i];
+    }
+    return mn;
+}
+
+void Info1() {
+    cout << "Аб-ганеев А. Н. группа 1бИВТн5 вариант 2\n\n";
+}
+
+void Info2() {
+    cout << "Аб-ганеев А. Н. группа 1бИВТн5 вариант 1\n\n";
+}
+
+bool isAllOnes(double matrix[][MCOL], int rows, int col) {
+    for (int i = 0; i < rows; i++) {
+        if (matrix[i][col] != 1) return false;
+    }
+    return true;
+}
+
+int emergencyExit() {
+    system("cls");
+    Info2();
+    cout << "Аварийный выход\n\n";
+    system("pause");
+    return 0;
+}
+
+int victory() {
+    system("cls");
+    Info2();
+    cout << "Поздраляю, вы прошли лабиринт!\n\n";
+    return 0;
+}
+
+string shifrText;
+string engAlphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+string rusAlphabet = "АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдеёжзийклмнопрстуфхцчшщъыьэюя";
+string numAlphabet = "0123456789";
+COORD pos = GetCursorPosition();
+
+bool isValidText(const string& text) {
+    for (char c : text) {
+        if (engAlphabet.find(c) == string::npos && rusAlphabet.find(c) == string::npos && c != ' ' && numAlphabet.find(c) == string::npos)
+        {
+            return false;
+        }
+    }
+    return true;
+}
+
+
+int firstMenu() {
+    unsigned char ch = 0;
+    do {
+        system("cls");
+        cout << "Меню программы\n";
+        cout << "1 - Лабораторная работа 2.1\n";
+        cout << "2 - Лабораторная работа 2.2\n";
+        cout << "3 - Лабораторная работа 3\n";
+        cout << "4 - Лабораторная работа 4\n";
+        cout << "ESC для выхода из программы\n\n";
+
+        ch = _getch();
+        switch (ch) {
+        case '1': Lab2_1(); break;
+        case '2': Lab2_2(); break;
+        case '3': Lab3(); break;
+        case '4': Lab4(); break;
+        case 27: break;
+        }
+    } while (ch != 27);
+    return 0;
+}
+
+int secondMenu() {
+    unsigned char ch = 0;
+    do {
+        system("cls");
+        cout << "Меню программы\n";
+        cout << "1 - Лабиринт\n";
+        cout << "2 - Маска\n";
+        cout << "3 - Лабораторная работа 1\n";
+        cout << "4 - Лабораторная работа 2\n";
+        cout << "5 - Лабораторная работа 3\n";
+        cout << "6 - Типы данных, их разряды\n";
+        cout << "7 - Шифрование\n";
+		cout << "8 - Классы\n";
+        cout << "ESC для выхода из программы\n\n";
+
+        ch = _getch();
+        switch (ch) {
+        case '1': Lab_Maze(); break;
+        case '2': Lab_Maska(); break;
+        case '3': sLab_1(); break;
+        case '4': sLab_2(); break;
+        case '5': sLab_3(); break;
+        case '6': Lab_Types(); break;
+        case '7': EncryptMenu(); break;
+		case '8': MenuClasses(); break;
+        case 27: break;
+        }
+    } while (ch != 27);
+    return 0;
+}

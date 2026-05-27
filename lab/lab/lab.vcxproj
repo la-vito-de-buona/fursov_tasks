@@ -127,17 +127,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Core\helpfuncs.h" />
-    <ClInclude Include="Core\io.h" />
-    <ClInclude Include="Core\matrix.h" />
-    <ClInclude Include="header.h" />
     <ClInclude Include="Labs\class.h" />
+    <ClInclude Include="Labs\header.h" />
+    <ClInclude Include="Labs\helpfuncs.h" />
+    <ClInclude Include="Labs\io.h" />
     <ClInclude Include="Labs\lab2_1.h" />
     <ClInclude Include="Labs\lab2_2.h" />
     <ClInclude Include="Labs\lab3.h" />
     <ClInclude Include="Labs\lab4.h" />
     <ClInclude Include="Labs\lab_types.h" />
     <ClInclude Include="Labs\maska.h" />
+    <ClInclude Include="Labs\matrix.h" />
     <ClInclude Include="Labs\maze.h" />
     <ClInclude Include="Labs\shifr.h" />
     <ClInclude Include="Labs\slab_1.h" />
@@ -145,20 +145,20 @@
     <ClInclude Include="Labs\slab_3.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="CEllipse.cpp" />
-    <ClCompile Include="Classes.cpp" />
-    <ClCompile Include="Core\helpfuncs.cpp" />
-    <ClCompile Include="Core\io.cpp" />
-    <ClCompile Include="Core\matrix.cpp" />
-    <ClCompile Include="CTriangle.cpp" />
-    <ClCompile Include="lab.cpp" />
+    <ClCompile Include="Labs\CEllipse.cpp" />
+    <ClCompile Include="Labs\Classes.cpp" />
     <ClCompile Include="Labs\CRectangle.cpp" />
+    <ClCompile Include="Labs\CTriangle.cpp" />
+    <ClCompile Include="Labs\helpfuncs.cpp" />
+    <ClCompile Include="Labs\io.cpp" />
+    <ClCompile Include="Labs\lab.cpp" />
     <ClCompile Include="Labs\lab2_1.cpp" />
     <ClCompile Include="Labs\lab2_2.cpp" />
     <ClCompile Include="Labs\lab3.cpp" />
     <ClCompile Include="Labs\lab4.cpp" />
     <ClCompile Include="Labs\lab_types.cpp" />
     <ClCompile Include="Labs\maska.cpp" />
+    <ClCompile Include="Labs\matrix.cpp" />
     <ClCompile Include="Labs\maze.cpp" />
     <ClCompile Include="Labs\shifr.cpp" />
     <ClCompile Include="Labs\slab_1.cpp" />
@@ -166,10 +166,11 @@
     <ClCompile Include="Labs\slab_3.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="Data\big.txt" />
-    <Text Include="Data\big_bin.txt" />
-    <Text Include="Data\small.txt" />
-    <Text Include="Data\small_bin.txt" />
+    <Text Include="BigNumbers.txt" />
+    <Text Include="SmallNumbers.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="123.bin" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

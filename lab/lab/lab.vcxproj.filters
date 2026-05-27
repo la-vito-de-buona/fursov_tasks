@@ -13,32 +13,11 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Data">
-      <UniqueIdentifier>{c4d96277-0bfb-47f9-b9fb-b62942627b96}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Core">
-      <UniqueIdentifier>{8324f73d-eaf2-4031-9f9e-57343137f99e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Labs">
       <UniqueIdentifier>{cbadf494-228a-496d-95f3-ed9cc3ea1b2a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="Data\small_bin.txt">
-      <Filter>Data</Filter>
-    </Text>
-    <Text Include="Data\big.txt">
-      <Filter>Data</Filter>
-    </Text>
-    <Text Include="Data\big_bin.txt">
-      <Filter>Data</Filter>
-    </Text>
-    <Text Include="Data\small.txt">
-      <Filter>Data</Filter>
-    </Text>
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="lab.cpp" />
     <ClCompile Include="Labs\lab_types.cpp">
       <Filter>Labs</Filter>
     </ClCompile>
@@ -72,30 +51,32 @@
     <ClCompile Include="Labs\shifr.cpp">
       <Filter>Labs</Filter>
     </ClCompile>
-    <ClCompile Include="Core\matrix.cpp">
-      <Filter>Core</Filter>
-    </ClCompile>
-    <ClCompile Include="Core\io.cpp">
-      <Filter>Core</Filter>
-    </ClCompile>
-    <ClCompile Include="Core\helpfuncs.cpp">
-      <Filter>Core</Filter>
-    </ClCompile>
     <ClCompile Include="Labs\CRectangle.cpp">
       <Filter>Labs</Filter>
     </ClCompile>
-    <ClCompile Include="Classes.cpp">
+    <ClCompile Include="Labs\CEllipse.cpp">
       <Filter>Labs</Filter>
     </ClCompile>
-    <ClCompile Include="CTriangle.cpp">
+    <ClCompile Include="Labs\Classes.cpp">
       <Filter>Labs</Filter>
     </ClCompile>
-    <ClCompile Include="CEllipse.cpp">
+    <ClCompile Include="Labs\CTriangle.cpp">
+      <Filter>Labs</Filter>
+    </ClCompile>
+    <ClCompile Include="Labs\helpfuncs.cpp">
+      <Filter>Labs</Filter>
+    </ClCompile>
+    <ClCompile Include="Labs\io.cpp">
+      <Filter>Labs</Filter>
+    </ClCompile>
+    <ClCompile Include="Labs\lab.cpp">
+      <Filter>Labs</Filter>
+    </ClCompile>
+    <ClCompile Include="Labs\matrix.cpp">
       <Filter>Labs</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="header.h" />
     <ClInclude Include="Labs\lab_types.h">
       <Filter>Labs</Filter>
     </ClInclude>
@@ -129,17 +110,29 @@
     <ClInclude Include="Labs\shifr.h">
       <Filter>Labs</Filter>
     </ClInclude>
-    <ClInclude Include="Core\matrix.h">
-      <Filter>Core</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\io.h">
-      <Filter>Core</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\helpfuncs.h">
-      <Filter>Core</Filter>
-    </ClInclude>
     <ClInclude Include="Labs\class.h">
       <Filter>Labs</Filter>
     </ClInclude>
+    <ClInclude Include="Labs\header.h">
+      <Filter>Labs</Filter>
+    </ClInclude>
+    <ClInclude Include="Labs\helpfuncs.h">
+      <Filter>Labs</Filter>
+    </ClInclude>
+    <ClInclude Include="Labs\io.h">
+      <Filter>Labs</Filter>
+    </ClInclude>
+    <ClInclude Include="Labs\matrix.h">
+      <Filter>Labs</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="SmallNumbers.txt" />
+    <Text Include="BigNumbers.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="123.bin">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>
