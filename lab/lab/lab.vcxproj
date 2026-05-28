@@ -145,10 +145,7 @@
     <ClInclude Include="Labs\slab_3.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Labs\CEllipse.cpp" />
     <ClCompile Include="Labs\Classes.cpp" />
-    <ClCompile Include="Labs\CRectangle.cpp" />
-    <ClCompile Include="Labs\CTriangle.cpp" />
     <ClCompile Include="Labs\helpfuncs.cpp" />
     <ClCompile Include="Labs\io.cpp" />
     <ClCompile Include="Labs\lab.cpp" />

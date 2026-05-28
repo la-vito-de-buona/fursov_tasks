@@ -51,16 +51,7 @@
     <ClCompile Include="Labs\shifr.cpp">
       <Filter>Labs</Filter>
     </ClCompile>
-    <ClCompile Include="Labs\CRectangle.cpp">
-      <Filter>Labs</Filter>
-    </ClCompile>
-    <ClCompile Include="Labs\CEllipse.cpp">
-      <Filter>Labs</Filter>
-    </ClCompile>
     <ClCompile Include="Labs\Classes.cpp">
-      <Filter>Labs</Filter>
-    </ClCompile>
-    <ClCompile Include="Labs\CTriangle.cpp">
       <Filter>Labs</Filter>
     </ClCompile>
     <ClCompile Include="Labs\helpfuncs.cpp">

@@ -21,6 +21,7 @@ using namespace std;
 #define Hi(a) (a >> (sizeof(a) * 4))
 #define Lo(a) (a ^ (Hi(a) << (sizeof(a) * 4)))
 #define Swap(a) (Hi(a) | (Lo(a) << (sizeof(a) * 4)))
+#define LINES(a) for (int ii = 0; ii < a; ii++) cout << endl
 
 
 int main();
@@ -42,6 +43,14 @@ int sLab_3();
 int Lab_Maze();
 int Lab_Types();
 int EncryptMenu();
+
+enum _eButton {
+    eb_None = 0,
+    eb_Left = 1,
+    eb_Right = 2,
+    eb_Up = 3,
+    eb_Down = 4
+};
 
 float cin_cond(std::string b, float ex = INFINITE);
 float maxx(float a, float b, float c, float d);
@@ -83,3 +92,4 @@ bool inputText(string& value);
 
 
 void MenuClasses();
+bool ReadStringWithESC(string& out);

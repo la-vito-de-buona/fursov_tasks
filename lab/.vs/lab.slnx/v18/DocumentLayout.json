@@ -1,18 +1,26 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "E:\\cpp\\lab_prog\\lab\\",
+  "WorkspaceRootPath": "E:\\git\\fursov_tasks\\lab\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{4FB44E99-16C7-4124-8699-1F4910A7504D}|lab\\lab.vcxproj|E:\\cpp\\lab_prog\\lab\\lab\\Labs\\slab_3.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{4FB44E99-16C7-4124-8699-1F4910A7504D}|lab\\lab.vcxproj|solutionrelative:lab\\Labs\\slab_3.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+      "AbsoluteMoniker": "D:0:0:{4FB44E99-16C7-4124-8699-1F4910A7504D}|lab\\lab.vcxproj|E:\\git\\fursov_tasks\\lab\\lab\\Labs\\Classes.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{4FB44E99-16C7-4124-8699-1F4910A7504D}|lab\\lab.vcxproj|solutionrelative:lab\\Labs\\Classes.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{4FB44E99-16C7-4124-8699-1F4910A7504D}|lab\\lab.vcxproj|E:\\cpp\\lab_prog\\lab\\lab\\Labs\\io.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "AbsoluteMoniker": "D:0:0:{4FB44E99-16C7-4124-8699-1F4910A7504D}|lab\\lab.vcxproj|E:\\git\\fursov_tasks\\lab\\lab\\Labs\\class.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{4FB44E99-16C7-4124-8699-1F4910A7504D}|lab\\lab.vcxproj|solutionrelative:lab\\Labs\\class.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4FB44E99-16C7-4124-8699-1F4910A7504D}|lab\\lab.vcxproj|E:\\git\\fursov_tasks\\lab\\lab\\Labs\\header.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{4FB44E99-16C7-4124-8699-1F4910A7504D}|lab\\lab.vcxproj|solutionrelative:lab\\Labs\\header.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4FB44E99-16C7-4124-8699-1F4910A7504D}|lab\\lab.vcxproj|E:\\git\\fursov_tasks\\lab\\lab\\Labs\\io.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{4FB44E99-16C7-4124-8699-1F4910A7504D}|lab\\lab.vcxproj|solutionrelative:lab\\Labs\\io.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{4FB44E99-16C7-4124-8699-1F4910A7504D}|lab\\lab.vcxproj|E:\\cpp\\lab_prog\\lab\\lab\\Labs\\header.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{4FB44E99-16C7-4124-8699-1F4910A7504D}|lab\\lab.vcxproj|solutionrelative:lab\\Labs\\header.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+      "AbsoluteMoniker": "D:0:0:{4FB44E99-16C7-4124-8699-1F4910A7504D}|lab\\lab.vcxproj|E:\\git\\fursov_tasks\\lab\\lab\\Labs\\slab_3.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{4FB44E99-16C7-4124-8699-1F4910A7504D}|lab\\lab.vcxproj|solutionrelative:lab\\Labs\\slab_3.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     }
   ],
   "DocumentGroupContainers": [
@@ -22,17 +30,17 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 3,
+          "SelectedChildIndex": 2,
           "Children": [
             {
               "$type": "Document",
               "DocumentIndex": 2,
               "Title": "header.h",
-              "DocumentMoniker": "E:\\cpp\\lab_prog\\lab\\lab\\Labs\\header.h",
+              "DocumentMoniker": "E:\\git\\fursov_tasks\\lab\\lab\\Labs\\header.h",
               "RelativeDocumentMoniker": "lab\\Labs\\header.h",
-              "ToolTip": "E:\\cpp\\lab_prog\\lab\\lab\\Labs\\header.h",
+              "ToolTip": "E:\\git\\fursov_tasks\\lab\\lab\\Labs\\header.h",
               "RelativeToolTip": "lab\\Labs\\header.h",
-              "ViewState": "AgIAACMAAAAAAAAAAAAiwDYAAAAsAAAAAAAAAA==",
+              "ViewState": "AgIAACEAAAAAAAAAAAAAAF4AAAAkAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
               "WhenOpened": "2026-05-27T17:35:29.914Z",
               "IsPinned": true,
@@ -44,26 +52,52 @@
             },
             {
               "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Classes.cpp",
+              "DocumentMoniker": "E:\\git\\fursov_tasks\\lab\\lab\\Labs\\Classes.cpp",
+              "RelativeDocumentMoniker": "lab\\Labs\\Classes.cpp",
+              "ToolTip": "E:\\git\\fursov_tasks\\lab\\lab\\Labs\\Classes.cpp",
+              "RelativeToolTip": "lab\\Labs\\Classes.cpp",
+              "ViewState": "AgIAAOoAAAAAAAAAAAAAAN0AAAANAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2026-05-28T09:22:42.01Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
               "DocumentIndex": 1,
+              "Title": "class.h",
+              "DocumentMoniker": "E:\\git\\fursov_tasks\\lab\\lab\\Labs\\class.h",
+              "RelativeDocumentMoniker": "lab\\Labs\\class.h",
+              "ToolTip": "E:\\git\\fursov_tasks\\lab\\lab\\Labs\\class.h",
+              "RelativeToolTip": "lab\\Labs\\class.h",
+              "ViewState": "AgIAAH0BAAAAAAAAAAAAACMBAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2026-05-28T09:21:35.481Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
               "Title": "io.cpp",
-              "DocumentMoniker": "E:\\cpp\\lab_prog\\lab\\lab\\Labs\\io.cpp",
+              "DocumentMoniker": "E:\\git\\fursov_tasks\\lab\\lab\\Labs\\io.cpp",
               "RelativeDocumentMoniker": "lab\\Labs\\io.cpp",
-              "ToolTip": "E:\\cpp\\lab_prog\\lab\\lab\\Labs\\io.cpp",
+              "ToolTip": "E:\\git\\fursov_tasks\\lab\\lab\\Labs\\io.cpp",
               "RelativeToolTip": "lab\\Labs\\io.cpp",
-              "ViewState": "AgIAAEYAAAAAAAAAAAAswJoAAABVAAAAAAAAAA==",
+              "ViewState": "AgIAAOYAAAAAAAAAAAAAwPUAAAAeAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2026-05-27T21:52:39.869Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 4,
               "Title": "slab_3.cpp",
-              "DocumentMoniker": "E:\\cpp\\lab_prog\\lab\\lab\\Labs\\slab_3.cpp",
+              "DocumentMoniker": "E:\\git\\fursov_tasks\\lab\\lab\\Labs\\slab_3.cpp",
               "RelativeDocumentMoniker": "lab\\Labs\\slab_3.cpp",
-              "ToolTip": "E:\\cpp\\lab_prog\\lab\\lab\\Labs\\slab_3.cpp",
+              "ToolTip": "E:\\git\\fursov_tasks\\lab\\lab\\Labs\\slab_3.cpp",
               "RelativeToolTip": "lab\\Labs\\slab_3.cpp",
-              "ViewState": "AgIAAI0CAAAAAAAAAAAAAPcBAAAiAAAAAAAAAA==",
+              "ViewState": "AgIAAMMCAAAAAAAAAAAAAPcBAAAiAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2026-05-26T22:16:18.816Z",
               "EditorCaption": ""

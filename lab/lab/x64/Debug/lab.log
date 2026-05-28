@@ -1,2 +1,5 @@
-﻿  slab_3.cpp
-  lab.vcxproj -> E:\cpp\lab_prog\lab\x64\Debug\lab.exe
+﻿  Classes.cpp
+E:\git\fursov_tasks\lab\lab\Labs\class.h(147,21): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+  (compiling source file 'Labs/Classes.cpp')
+  
+  lab.vcxproj -> E:\git\fursov_tasks\lab\x64\Debug\lab.exe
